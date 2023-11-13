@@ -28,11 +28,11 @@ Web:
 ## Trang web cho việc hiển thị sản phẩm
 ![image](https://github.com/PhamBaBac/www_lap02_week_02_restapi/assets/99248518/00c4a030-a2a8-4587-9372-5b7e78fec10d)
 
-## Giỏ hàng
-![image](https://github.com/PhamBaBac/www_lap02_week_02_restapi/assets/99248518/87819041-3966-4818-b1b2-8359860da641)
-
 ## Biểu đồ giá theo thời gian
 ![image](https://github.com/PhamBaBac/www_lap02_week_02_restapi/assets/99248518/9e130aa9-46d8-4041-aacf-2fac1fc9328c)
+
+## Giỏ hàng
+![image](https://github.com/PhamBaBac/www_lap02_week_02_restapi/assets/99248518/87819041-3966-4818-b1b2-8359860da641)
 
 
 
