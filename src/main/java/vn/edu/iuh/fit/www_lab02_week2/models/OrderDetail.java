@@ -3,6 +3,9 @@ package vn.edu.iuh.fit.www_lab02_week2.models;
 import jakarta.persistence.*;
 
 @Entity
+@NamedQueries(value = {
+        @NamedQuery(name = "OrderDetail.findAll", query = "select od from OrderDetail od"),
+})
 @Table(name = "order_detail")
 public class OrderDetail {
     /* @EmbeddedId

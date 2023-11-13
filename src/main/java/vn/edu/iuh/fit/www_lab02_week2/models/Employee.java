@@ -1,16 +1,20 @@
 package vn.edu.iuh.fit.www_lab02_week2.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import vn.edu.iuh.fit.www_lab02_week2.enums.EmployeeStatus;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @NamedQueries({@NamedQuery(name = "Employee.findAll", query = "select e from Employee e where e.status= ?1"),
-        @NamedQuery(name = "Employee.findById", query = "select e from Employee e where e.id = ?1")}
+        @NamedQuery(name = "Employee.findById", query = "select e from Employee e where e.id = ?1"),
+        @NamedQuery(name = "Employee.delete", query = "delete from Employee e where e.id = :empId")
+}
 )
+@Table(name = "employee")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +23,7 @@ public class Employee {
     @Column(name = "full_name", length = 150, nullable = false)
     private String fullname;
     @Column(name = "dob", nullable = false)
-    private LocalDateTime dob;
+    private LocalDate dob;
     @Column(name = "email", unique = true, length = 150)
     private String email;
     @Column(name = "phone", length = 15, nullable = false)
@@ -31,12 +35,17 @@ public class Employee {
 
     @OneToMany
     @JoinColumn
+    @JsonIgnore
     private List<Order> lstOrder;
 
     public Employee() {
     }
 
-    public Employee(String fullname, LocalDateTime dob, String email, String phone, String address, EmployeeStatus status) {
+    public Employee(String fullname) {
+        this.fullname = fullname;
+    }
+
+    public Employee(String fullname, LocalDate dob, String email, String phone, String address, EmployeeStatus status) { // Cập nhật constructor
         this.fullname = fullname;
         this.dob = dob;
         this.email = email;
@@ -61,11 +70,11 @@ public class Employee {
         this.fullname = fullname;
     }
 
-    public LocalDateTime getDob() {
+    public LocalDate getDob() {
         return dob;
     }
 
-    public void setDob(LocalDateTime dob) {
+    public void setDob(LocalDate dob) {
         this.dob = dob;
     }
 
@@ -101,6 +110,14 @@ public class Employee {
         this.status = status;
     }
 
+    public List<Order> getLstOrder() {
+        return lstOrder;
+    }
+
+    public void setLstOrder(List<Order> lstOrder) {
+        this.lstOrder = lstOrder;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
@@ -117,13 +134,13 @@ public class Employee {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Employee)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return getId() == employee.getId();
+        return id == employee.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(id);
     }
 }

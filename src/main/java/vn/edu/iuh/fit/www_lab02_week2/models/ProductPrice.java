@@ -5,6 +5,13 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@NamedQueries(value = {
+        @NamedQuery(
+                name = "ProductPrice.getAllPriceDateTimeById",
+                query = "SELECT pp.price_date_time, pp.price FROM ProductPrice pp JOIN FETCH pp.product p WHERE p.product_id = :productId"
+        )
+
+})
 @Table(name = "product_price")
 public class ProductPrice {
 

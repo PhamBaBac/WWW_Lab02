@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+</head>
+<body>
+
+<table width="80%" align="center" border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>NAME</th>
+        <th>DESCRIPTION</th>
+        <th>UNIT</th>
+        <th>MANUFACTURER</th>
+        <th>STATUS</th>
+    </tr>
+    </thead>
+    <tbody id="productList">
+    </tbody>
+</table>
+
+<script>
+    async function fetchProductData() {
+        try {
+            const response = await fetch('http://localhost:8080/rest/api/products/all');
+            if (!response.ok) {
+                throw new Error('Failed to retrieve product data');
+            }
+            console.log(response)
+
+            const data = await response.json();
+            const productList = document.getElementById('productList');
+            console.log(data)
+            data.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.product_id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.description}</td>
+                    <td>${product.unit}</td>
+                    <td>${product.manufacturer}</td>
+                    <td>${product.status}</td>
+                `;
+                productList.appendChild(row);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    fetchProductData();
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insert Employee</title>
+</head>
+<style>
+    #create{
+        margin-top: 60px;
+    }
+</style>
+<body>
+<h2>Insert Employee</h2>
+<form id="insertEmpForm">
+    <label for="fullname">Full Name:</label><br>
+    <input type="text" id="fullname" name="fullname"><br>
+    <label for="dob">Date of Birth:</label><br>
+    <input type="date" id="dob" name="dob"><br>
+    <label for="phone">Phone:</label><br>
+    <input type="tel" id="phone" name="phone"><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email"><br>
+    <label for="address">Address:</label><br>
+    <input type="text" id="address" name="address"><br>
+    <label for="status">Status:</label><br>
+    <select id="status" name="status">
+        <option value="ACTIVE">Active</option>
+        <option value="IN_ACTIVE">Inactive</option>
+        <option value="TERMINATED">Terminated</option>
+    </select><br>
+    <input id="create" type="submit" value="create">
+</form>
+
+<script>
+    document.getElementById('insertEmpForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const response = await fetch('http://localhost:8080/rest/api/employees/insert', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fullname: document.getElementById('fullname').value,
+                dob: document.getElementById('dob').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                status: document.getElementById('status').value
+            })
+        });
+        console.log(response)
+        if (response.ok) {
+            window.location.href = 'listEmp.html';
+        } else {
+            throw new Error('Failed to insert employee');
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order List</title>
+</head>
+<body>
+
+<table width="80%" align="center" border="1">
+    <thead>
+    <tr>
+        <th>ORDER ID</th>
+        <th>PRODUCT NAME</th>
+        <th>QUANTITY</th>
+        <th>PRICE</th>
+        <th>NOTE</th>
+    </tr>
+    </thead>
+    <tbody id="orderDetailList">
+    </tbody>
+</table>
+
+<script>
+    async function fetchOrderData() {
+        try {
+            const response = await fetch('http://localhost:8080/rest/api/orderDetails/all');
+            if (!response.ok) {
+                throw new Error('Failed to retrieve order data');
+            }
+
+            const data = await response.json();
+            const orderDetailList = document.getElementById('orderDetailList');
+            data.forEach(orderDetail => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${orderDetail.order_id}</td>
+                    <td>${orderDetail.productName}</td>
+                    <td>${orderDetail.quantity}</td>
+                    <td>${orderDetail.price}</td>
+                    <td>${orderDetail.note}</td>
+                `;
+                orderDetailList.appendChild(row);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    fetchOrderData();
+</script>
+</body>
+</html>

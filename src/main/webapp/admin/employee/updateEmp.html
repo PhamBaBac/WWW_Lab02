@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Update Employee</title>
+</head>
+<style>
+    #update{
+        margin-top: 80px;
+    }
+</style>
+<body>
+<h2>Update Employee Information</h2>
+
+<form id="updateForm">
+    <label for="fullname">Full Name:</label><br>
+    <input type="text" id="fullname" name="fullname"><br>
+    <label for="dob">Date of Birth:</label><br>
+    <input type="date" id="dob" name="dob"><br>
+    <label for="phone">Phone:</label><br>
+    <input type="tel" id="phone" name="phone"><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email"><br>
+    <label for="address">Address:</label><br>
+    <input type="text" id="address" name="address"><br>
+    <label for="status">Status:</label><br>
+    <select id="status" name="status">
+        <option value="ACTIVE">Active</option>
+        <option value="IN_ACTIVE">Inactive</option>
+        <option value="TERMINATED">Terminated</option>
+    </select><br>
+    <input id="update" type="submit" value="update">
+</form>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const employeeId = urlParams.get('employeeId');
+
+    fetchEmployeeDetails(employeeId);
+
+    document.getElementById('updateForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        updateEmployee(employeeId);
+    });
+
+    async function fetchEmployeeDetails(employeeId) {
+        try {
+            const response = await fetch(`http://localhost:8080/rest/api/employees/${employeeId}`);
+            if (!response.ok) {
+                throw new Error('Failed to retrieve employee details');
+            }
+
+            const employeeData = await response.json();
+            const dobDate = new Date(employeeData.dob);
+            const formattedDob = `${dobDate.getFullYear()}-${String(dobDate.getMonth() + 1).padStart(2, '0')}-${String(dobDate.getDate()).padStart(2, '0')}`;
+
+            document.getElementById('fullname').value = employeeData.fullname;
+            document.getElementById('dob').value = formattedDob;
+            document.getElementById('phone').value = employeeData.phone;
+            document.getElementById('email').value = employeeData.email;
+            document.getElementById('address').value = employeeData.address;
+            document.getElementById('status').value = employeeData.status;
+        } catch (error) {
+            console.error(error);
+            alert('Failed to retrieve employee details');
+        }
+    }
+
+    async function updateEmployee(employeeId) {
+        const data = {
+            id: employeeId,
+            fullname: document.getElementById('fullname').value,
+            dob: new Date(document.getElementById('dob').value).toISOString(),
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value,
+            status: document.getElementById('status').value
+        };
+
+        try {
+            const response = await fetch(`http://localhost:8080/rest/api/employees/${employeeId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update employee');
+            }
+            window.location.href = 'listEmp.html';
+        } catch (error) {
+            console.error(error);
+        }
+    }
+</script>
+</body>
+
+</html>

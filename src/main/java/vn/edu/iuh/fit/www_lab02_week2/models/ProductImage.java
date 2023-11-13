@@ -3,6 +3,9 @@ package vn.edu.iuh.fit.www_lab02_week2.models;
 import jakarta.persistence.*;
 
 @Entity
+@NamedQueries(value = {
+        @NamedQuery(name = "ProductImage.findAll", query = "select pi from ProductImage pi"),
+})
 @Table(name = "product_image")
 public class ProductImage {
     @Id

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+</head>
+<body>
+
+<table width="60%" align="center" border="1">
+    <thead>
+    <tr>
+        <th>IMAGE ID</th>
+        <th>NAME</th>
+        <th>IMAGE </th>
+        <th>ALTERNATIVE</th>
+    </tr>
+    </thead>
+    <tbody id="productImageList">
+    </tbody>
+</table>
+
+<script>
+    async function fetchProductData() {
+        try {
+            const response = await fetch('http://localhost:8080/rest/api/productImages/all');
+            if (!response.ok) {
+                throw new Error('Failed to retrieve product data');
+            }
+
+            const data = await response.json();
+            const productImageList = document.getElementById('productImageList');
+            console.log(data);
+
+            data.forEach(productImage => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${productImage.image_id}</td>
+                    <td>${productImage.productName}</td>
+                    <td align="center"><img src="${productImage.path}" alt="${productImage.alternative}" width="50"></td>
+                    <td>${productImage.alternative}</td
+                `;
+                productImageList.appendChild(row);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    fetchProductData();
+</script>
+</body>
+</html>

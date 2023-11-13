@@ -1,11 +1,15 @@
 package vn.edu.iuh.fit.www_lab02_week2.models;
-
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@NamedQueries(value = {
+        @NamedQuery(name = "Order.findAll", query = "select o from Order o"),
+        @NamedQuery(name = "Order.findByDateRange", query = "SELECT o FROM Order o WHERE o.orderDate BETWEEN :startDate AND :endDate")
+
+})
 @Table(name = "orders")
 public class Order {
     @Id

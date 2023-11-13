@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Employee List</title>
+</head>
+<style>
+    #create{
+        margin-top: 20px;
+    }
+</style>
+<body>
+<table width="100%" align="center" border="1">
+    <tr>
+        <th>ID</th>
+        <th>FULLNAME</th>
+        <th>DOB</th>
+        <th>PHONE</th>
+        <th>EMAIL</th>
+        <th>ADDRESS</th>
+        <th>STATUS</th>
+        <th>ACTION</th>
+    </tr>
+    <tbody align="center" id="employeeList">
+    </tbody>
+</table>
+
+<script>
+    async function fetchEmployeeData() {
+        try {
+            const response = await fetch('http://localhost:8080/rest/api/employees/all');
+            if (!response.ok) {
+                throw new Error('Failed to retrieve employee data');
+            }
+
+            const data = await response.json();
+            const employeeList = document.getElementById('employeeList');
+            employeeList.innerHTML = '';
+
+            data.forEach(employee => {
+                const row = document.createElement('tr');
+                const dobDate = new Date(employee.dob);
+                const formattedDob = `${dobDate.getDate()}-${dobDate.getMonth() + 1}-${dobDate.getFullYear()}`;
+                row.innerHTML = `
+                    <td>${employee.id}</td>
+                    <td>${employee.fullname}</td>
+                    <td>${formattedDob}</td>
+                    <td>${employee.phone}</td>
+                    <td>${employee.email}</td>
+                    <td>${employee.address}</td>
+                    <td>${employee.status}</td>
+                    <td>
+                        <button onclick="redirectToUpdate(${employee.id})">Update</button>
+                        <button onclick="deleteEmployee(${employee.id})">Delete</button>
+                    </td>
+                `;
+                employeeList.appendChild(row);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    function redirectToUpdate(employeeId) {
+        window.location.href = `updateEmp.html?employeeId=${employeeId}`;
+    }
+
+    async function deleteEmployee(employeeId) {
+        try {
+            const response = await fetch(`http://localhost:8080/rest/api/employees/${employeeId}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete employee');
+            }
+            fetchEmployeeData();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    fetchEmployeeData();
+</script>
+
+<button id="create" onclick="window.location.href='insertEmp.html'">Create</button>
+</body>
+
+</html>

@@ -1,17 +1,17 @@
 package vn.edu.iuh.fit.www_lab02_week2.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import vn.edu.iuh.fit.www_lab02_week2.enums.ProductStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "product")
 @NamedQueries(value = {
-        @NamedQuery(name = "Product.findAll", query = "select p from Product p where p.status = 1"),
-        @NamedQuery(name = "Product.findById", query = "select p from Product p where p.product_id = 1")
-        //,...1
+        @NamedQuery(name = "Product.findAll", query = "select p from Product p where p.status = ?1")
 })
 public class Product {
     @Id
@@ -33,8 +33,14 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     @JoinColumn
+    @JsonIgnore
     private List<ProductImage> productImageList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product")
+    @JoinColumn
+    @JsonIgnore
+    private List<ProductPrice> productPrices = new ArrayList<>();
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     @JoinColumn
     private List<OrderDetail> orderDetails = new ArrayList<>();
@@ -48,6 +54,12 @@ public class Product {
         this.unit = unit;
         this.manufacturer = manufacturer;
         this.status = status;
+    }
+
+    public Product(String name, List<ProductImage> productImageList, List<OrderDetail> orderDetails) {
+        this.name = name;
+        this.productImageList = productImageList;
+        this.orderDetails = orderDetails;
     }
 
     public long getProduct_id() {
@@ -106,6 +118,14 @@ public class Product {
         this.productImageList = productImageList;
     }
 
+    public List<ProductPrice> getProductPrices() {
+        return productPrices;
+    }
+
+    public void setProductPrices(List<ProductPrice> productPrices) {
+        this.productPrices = productPrices;
+    }
+
     public List<OrderDetail> getOrderDetails() {
         return orderDetails;
     }
@@ -114,6 +134,18 @@ public class Product {
         this.orderDetails = orderDetails;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return product_id == product.product_id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(product_id);
+    }
 
     @Override
     public String toString() {
@@ -126,6 +158,7 @@ public class Product {
                 ", status=" + status +
                 '}';
     }
+
 
 
 }

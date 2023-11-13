@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <style>
+        #charts {
+            width: 60%; /* Chiều rộng là 60% của trang */
+            margin: 0 auto; /* Căn giữa */
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div id="charts"></div>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('product');
+    async function fetchProductPriceData() {
+        try {
+            const response = await fetch(`http://localhost:8080/rest/api/productPrice/all/${productId}`);
+            if (!response.ok) {
+                throw new Error('Failed to retrieve product data');
+            }
+            const dataArray = await response.json();
+            const productData = {
+                labels: [],
+                data: []
+            };
+            dataArray.forEach(item => {
+                const dateArray = item[0];
+                const price = item[1];
+                const formattedDate = new Date(...dateArray).toLocaleString();
+                productData.labels.push(formattedDate);
+                productData.data.push(price);
+            });
+
+            const chartsDiv = document.getElementById('charts');
+            const canvas = document.createElement('canvas');
+            chartsDiv.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // Thay 'bar' bằng 'line'
+                data: {
+                    labels: productData.labels,
+                    datasets: [{
+                        label: `Giá theo thời gian của sản phẩm`,
+                        data: productData.data,
+                        borderColor: 'rgb(75, 192, 192)',
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+            });
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    fetchProductPriceData();
+</script>
+</body>
+</html>

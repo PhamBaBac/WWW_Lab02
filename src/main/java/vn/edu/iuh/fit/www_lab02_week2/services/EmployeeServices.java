@@ -20,35 +20,29 @@ public class EmployeeServices {
         repository.insertEmp(employee);
     }
 
+    public boolean updateEmployee(long id, Employee employee) {
+        Optional<Employee> rs = repository.findbyId(id);
+        if (rs.isEmpty()) {
+            return false;
+        }
+        repository.update(employee);
+        return true;
+    }
+
+    public boolean deleteEmployee(long id) {
+        Optional<Employee> rs = repository.findbyId(id);
+        if (rs.isPresent()) {
+            repository.deleteEmployee(id);
+            return true;
+        }
+        return false;
+    }
+
     public Optional<Employee> findById(long id) {
         return repository.findbyId(id);
     }
 
-    public boolean delete(long id) {
-        Optional<Employee> op = findById(id);
-        if (op.isPresent()) {
-            Employee employee = op.get();
-            employee.setStatus(EmployeeStatus.TERMINATED);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean activeEmp(long id) {
-        Optional<Employee> op = findById(id);
-        if (op.isPresent()) {
-            Employee employee = op.get();
-            employee.setStatus(EmployeeStatus.ACTIVE);
-            return true;
-        }
-        return false;
-    }
-
     public List<Employee> getAll() {
         return repository.getAllEmp();
-    }
-
-    public List<Order> getOrdersByPeriod(long empId, Date from, Date to) {
-        return null;
     }
 }

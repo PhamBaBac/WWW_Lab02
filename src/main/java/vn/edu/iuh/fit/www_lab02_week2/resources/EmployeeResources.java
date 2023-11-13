@@ -2,6 +2,7 @@ package vn.edu.iuh.fit.www_lab02_week2.resources;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
+import vn.edu.iuh.fit.www_lab02_week2.enums.EmployeeStatus;
 import vn.edu.iuh.fit.www_lab02_week2.models.Employee;
 import vn.edu.iuh.fit.www_lab02_week2.services.EmployeeServices;
 
@@ -24,18 +25,20 @@ public class EmployeeResources {
         List<Employee> lst = employeeServices.getAll();
         return Response.ok(lst).build();
     }
+
     @GET
     @Path("/{id}")
     @Produces("application/json")
-    public Response getEmp(@PathParam("id") long id) {
-        Optional<Employee> emp = employeeServices.findById(id);
-        if (emp.isPresent()) {
-            return Response.ok(emp.get()).build();
+    public Response findById(@PathParam("id") long id) {
+        Optional<Employee> employee = employeeServices.findById(id);
+        if (employee.isEmpty()) {
+            return Response.status(404).entity("{\"message\": \"Employee not found\"}").build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(employee.get()).build();
     }
 
     @POST
+    @Path("/insert")
     @Produces("application/json")
     @Consumes("application/json")
     public Response insert(Employee employee) {
@@ -43,12 +46,28 @@ public class EmployeeResources {
         return Response.status(Response.Status.CREATED).entity(employee).build();
     }
 
+    @PUT
+    @Path("/{id}")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public Response update(@PathParam("id") long id, Employee employee) {
+        boolean result = employeeServices.updateEmployee(id, employee);
+        if (!result) {
+            return Response.status(404).entity("{\"message\": \"Employee not found\"}").build();
+        }
+
+        return Response.ok().entity("{\"message\": \"Update employee successfully\"}").build();
+    }
+
     @DELETE
     @Path("/{id}")
+    @Produces("application/json")
     public Response delete(@PathParam("id") long id) {
-        if (employeeServices.delete(id)) {
-            return Response.noContent().build();
+        boolean result = employeeServices.deleteEmployee(id);
+        if (!result) {
+            return Response.status(404).entity("{\"message\": \"Employee not found\"}").build();
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+
+        return Response.ok().entity("{\"message\": \"Delete employee successfully\"}").build();
     }
 }

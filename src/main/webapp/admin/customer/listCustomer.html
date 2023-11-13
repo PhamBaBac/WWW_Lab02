@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer List</title>
+</head>
+<body>
+
+<table width="80%" align="center" border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>NAME</th>
+        <th>EMAIL</th>
+        <th>PHONE</th>
+        <th>ADDRESS</th>
+    </tr>
+    </thead>
+    <tbody id="customerList">
+    </tbody>
+</table>
+
+<script>
+    async function fetchCustomerData() {
+        try {
+            const response = await fetch('http://localhost:8080/rest/api/customers/all');
+            if (!response.ok) {
+                throw new Error('Failed to retrieve customer data');
+            }
+
+            const data = await response.json();
+            const customerList = document.getElementById('customerList');
+
+            data.forEach(customer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${customer.id}</td>
+                    <td>${customer.name}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.phone}</td>
+                    <td>${customer.address}</td>
+                `;
+                customerList.appendChild(row);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    fetchCustomerData();
+</script>
+</body>
+</html>

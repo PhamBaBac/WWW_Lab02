@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product List</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-...." crossorigin="anonymous" />
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    nav {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+
+    li {
+      margin-right: 15px;
+    }
+
+    a {
+      text-decoration: none;
+      color: white;
+    }
+
+    .badge {
+      background-color: red;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 50%;
+    }
+
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .product {
+      width: calc(25% - 20px);
+      height: 520px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      overflow: hidden;
+      border-radius: 8px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .product:hover {
+      transform: scale(1.05);
+    }
+
+    img {
+      width: 100%;
+      height: 300px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      height: 40px;
+    }
+    .product-info {
+      padding: 15px;
+      text-align: left;
+    }
+    .quantity-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 140px;
+    }
+    .quantity-btn {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      border: none;
+      background-color: #4CAF50;
+      color: #fff;
+      border-radius: 4px;
+    }
+    .price{
+      margin-top: 10px;
+      color: #D0011B;
+    }
+
+    .btn-container {
+      display: flex;
+      flex-direction: row; /* Set flex-direction to row for horizontal alignment */
+      gap: 10px; /* Add some spacing between buttons */
+    }
+
+    .add-to-cart-btn,
+    .view-chart-btn {
+      flex-grow: 1; /* Make buttons grow to fill available space */
+      background-color: #4CAF50;
+      color: white;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .add-to-cart-btn i {
+      margin-right: 5px;
+    }
+
+  </style>
+</head>
+<body>
+<nav>
+  <div class="header">
+    <ul class="navbar-left">
+      <li><a href="#">Home</a></li>
+      <li><a id="statistics">Statistics</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+
+    <ul class="navbar-right">
+      <li><a href="#" id="cartLink"><i class="fa fa-shopping-cart"></i> Cart <span class="badge">0</span></a></li>
+      <li><a href="admin/admin.jsp">Admin</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container" id="productList">
+
+</div> <!--end container -->
+<script>
+  async function fetchOrderData() {
+    function formatPrice(price) {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    }
+    try {
+      const response = await fetch('http://localhost:8080/rest/api/products/dto/all');
+      if (!response.ok) {
+        throw new Error('Failed to retrieve order data');
+      }
+
+      const data = await response.json();
+      const productList = document.getElementById('productList');
+      data.forEach(product => {
+        const productContainer = document.createElement('div');
+        productContainer.className = 'product';
+        productContainer.innerHTML = `
+            <img src="${product.path}" alt="${product.productName}">
+            <div class="product-info">
+                <h3>${product.productName}</h3>
+                <div class="quantity-controls">
+                  <p>Số lượng: </p>
+                  <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                  <p id="quantity">${product.quantity}</p>
+                  <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                </div>
+                <p class="price">${formatPrice(product.price)}</p>
+                <div class="btn-container">
+                   <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
+                     <i class="fa fa-shopping-cart"></i> Add to Cart
+                   </button>
+                   <button class="view-chart-btn" onclick="viewChart(${product.id})">
+                      Xem biểu đồ giá
+                   </button>
+                </div>
+            </div>
+        `;
+        productList.appendChild(productContainer);
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function decreaseQuantity() {
+    const quantityElement = document.getElementById('quantity');
+    let currentQuantity = parseInt(quantityElement.textContent);
+    if (currentQuantity > 0) {
+      currentQuantity--;
+      quantityElement.textContent = currentQuantity;
+    }
+  }
+
+  function increaseQuantity() {
+    const quantityElement = document.getElementById('quantity');
+    let currentQuantity = parseInt(quantityElement.textContent);
+    currentQuantity++;
+    quantityElement.textContent = currentQuantity;
+  }
+
+  let shoppingCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+
+  function addToCart(productId) {
+    const existingProduct = shoppingCart.find(product => product.id === productId);
+
+    if (existingProduct) {
+      existingProduct.quantity++;
+      alert("Thêm vào giỏ hàng thành công");
+    } else {
+      const productContainer = event.target.closest('.product');
+      const productName = productContainer.querySelector('h3').textContent;
+      const productPriceString = productContainer.querySelector('.price').textContent;
+      const productPrice = parseFloat(productPriceString.replace('đ', '').replace(/[^\d]/g, ''));
+
+      const productQuantity = parseInt(productContainer.querySelector('#quantity').textContent);
+      const productPath = productContainer.querySelector('img').getAttribute('src');
+
+      const product = {
+        id: productId,
+        name: productName,
+        price: productPrice,
+        quantity: productQuantity,
+        path: productPath
+      };
+      shoppingCart.push(product);
+      alert("Thêm vào giỏ hàng thành công");
+    }
+
+
+    updateCartBadge();
+    localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
+
+    if (window.cartDisplay) {
+      window.cartDisplay.updateCart();
+    }
+  }
+
+  function updateCartBadge() {
+    const distinctProductCount = new Set(shoppingCart.map(product => product.id)).size;
+    const cartBadge = document.querySelector('#cartLink .badge');
+    cartBadge.textContent = distinctProductCount;
+  }
+  function viewChart(productId) {
+    window.location.href = `admin/productPrice/productPrice.html?product=${productId}`;
+  }
+
+  document.getElementById('cartLink').addEventListener('click', function(event) {
+    event.preventDefault();
+    window.location.href = 'fontend/cart/cart.html';
+  });
+  document.getElementById('statistics').addEventListener('click', function(event) {
+    event.preventDefault();
+    window.location.href = 'admin/order/listOrderByDate.html';
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    fetchOrderData();
+    updateCartBadge();
+  });
+</script>
+
+</body>
+</html>
