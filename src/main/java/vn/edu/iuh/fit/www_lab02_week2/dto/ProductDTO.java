@@ -3,6 +3,7 @@ package vn.edu.iuh.fit.www_lab02_week2.dto;
 public class ProductDTO {
     private long id;
     private String productName;
+    private String description;
     private String path;
     private double quantity;
     private double price;
@@ -10,9 +11,10 @@ public class ProductDTO {
     public ProductDTO() {
     }
 
-    public ProductDTO(long id, String productName, String path, double quantity, double price) {
+    public ProductDTO(long id, String productName, String description, String path, double quantity, double price) {
         this.id = id;
         this.productName = productName;
+        this.description = description;
         this.path = path;
         this.quantity = quantity;
         this.price = price;
@@ -32,6 +34,14 @@ public class ProductDTO {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getPath() {
@@ -56,16 +66,5 @@ public class ProductDTO {
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    @Override
-    public String toString() {
-        return "ProductDTO{" +
-                "id=" + id +
-                ", productName='" + productName + '\'' +
-                ", path='" + path + '\'' +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                '}';
     }
 }

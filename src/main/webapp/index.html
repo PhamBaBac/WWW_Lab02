@@ -172,9 +172,9 @@
                 <h3>${product.productName}</h3>
                 <div class="quantity-controls">
                   <p>Số lượng: </p>
-                  <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
-                  <p id="quantity">${product.quantity}</p>
-                  <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                  <button class="quantity-btn" onclick="decreaseQuantity(${product.id})">-</button>
+                    <p id="quantity_${product.id}">1</p>
+                  <button class="quantity-btn" onclick="increaseQuantity(${product.id})">+</button>
                 </div>
                 <p class="price">${formatPrice(product.price)}</p>
                 <div class="btn-container">
@@ -194,8 +194,8 @@
     }
   }
 
-  function decreaseQuantity() {
-    const quantityElement = document.getElementById('quantity');
+  function decreaseQuantity(productId) {
+    const quantityElement = document.getElementById(`quantity_${productId}`);
     let currentQuantity = parseInt(quantityElement.textContent);
     if (currentQuantity > 0) {
       currentQuantity--;
@@ -203,15 +203,14 @@
     }
   }
 
-  function increaseQuantity() {
-    const quantityElement = document.getElementById('quantity');
+  function increaseQuantity(productId) {
+    const quantityElement = document.getElementById(`quantity_${productId}`);
     let currentQuantity = parseInt(quantityElement.textContent);
     currentQuantity++;
     quantityElement.textContent = currentQuantity;
   }
 
   let shoppingCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
-
   function addToCart(productId) {
     const existingProduct = shoppingCart.find(product => product.id === productId);
 
@@ -224,7 +223,7 @@
       const productPriceString = productContainer.querySelector('.price').textContent;
       const productPrice = parseFloat(productPriceString.replace('đ', '').replace(/[^\d]/g, ''));
 
-      const productQuantity = parseInt(productContainer.querySelector('#quantity').textContent);
+      const productQuantity = parseInt(productContainer.querySelector(`#quantity_${productId}`).textContent);
       const productPath = productContainer.querySelector('img').getAttribute('src');
 
       const product = {
@@ -238,7 +237,6 @@
       alert("Thêm vào giỏ hàng thành công");
     }
 
-
     updateCartBadge();
     localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
 
@@ -246,6 +244,7 @@
       window.cartDisplay.updateCart();
     }
   }
+
 
   function updateCartBadge() {
     const distinctProductCount = new Set(shoppingCart.map(product => product.id)).size;

@@ -45,7 +45,7 @@ public class ProductRepository {
         ProductDTO dto = new ProductDTO();
 
         dto.setId(orderDetail.getProduct().getProduct_id());
-        dto.setProductName(orderDetail.getProduct().getDescription());
+        dto.setProductName(orderDetail.getProduct().getName());
         dto.setQuantity(orderDetail.getQuantity());
 
         List<ProductImage> productImageList = orderDetail.getProduct().getProductImageList();
