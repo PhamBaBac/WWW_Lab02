@@ -25,6 +25,7 @@ Web:
 ![image](https://github.com/PhamBaBac/www_lap02_week_02_restapi/assets/99248518/d359ccde-8d12-449f-a301-30f2d5d193c1)
 
 # WEB
+## dùng mariadb chạy file shops.sql để có dữ liệu
 ## Trang web cho việc hiển thị sản phẩm
 ![image](https://github.com/PhamBaBac/www_lap02_week_02_restapi/assets/99248518/00c4a030-a2a8-4587-9372-5b7e78fec10d)
 
